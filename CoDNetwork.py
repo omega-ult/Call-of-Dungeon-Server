@@ -204,7 +204,7 @@ class NetStream(object):
 	def __recvRaw(self, size):
 		_rdata = self.__peekRaw(size)
 		size = len(_rdata)
-		self._recvBuf = self._recvBuf[size:0]
+		self._recvBuf = self._recvBuf[size:]
 		return _rdata
 
 	# append data into send_buf with a size header
@@ -227,7 +227,6 @@ class NetStream(object):
 		_size = struct.unpack(self.__headFMT, _rsize)[0] + self.__headINC
 		if (len(self._recvBuf) < _size):
 			return ''
-
 		self.__recvRaw(self.__headHDR)
 		return self.__recvRaw(_size - self.__headHDR)
 
@@ -466,10 +465,10 @@ class NetHost(object):
 #----------------------------------------------------------------------
 if __name__ == '__main__':
 	host = NetHost(8)
-	host.startup(2000)
+	host.startup(10305)
 	sock = NetStream(8)
 	last = time.time()
-	sock.connect('127.0.0.1', 2000)
+	sock.connect('127.0.0.1', 10305)
 	sock.send('Hello, world !!')
 	stat = 0
 	last = time.time()

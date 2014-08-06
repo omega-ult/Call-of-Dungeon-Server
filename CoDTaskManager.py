@@ -96,14 +96,12 @@ class TaskManager(object):
 		task.cancel()
 		TaskManager.cancelledNum += 1
 
-		print "task cancelled"
 		if float(TaskManager.cancelledNum)/len(TaskManager.tasks) > 0.25:
 			TaskManager.removeCancelledTasks()
 		return
 
 	@staticmethod
 	def removeCancelledTasks():
-		print "remove cancelled tasks"
 		_tmpTask = []
 		for t in TaskManager.tasks:
 			if not t.isCancelled:
