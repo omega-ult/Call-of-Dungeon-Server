@@ -19,23 +19,24 @@ class IOService(object):
 		#process network
 		raise NotImplementedError 
 
-	def run(self, timeout = 0.5):
+	def run(self):
 		while 1:
-			self.process(timeout)
+			self.process(self._timeout)
 			CoDTaskManager.TaskManager.scheduler()
 		return
 
 class GameServer(IOService):
 	def __init__(self, tickTime = 0.1):
 		super(GameServer, self).__init__()
+		self._timeout = tickTime
 		self._tickTimer = CoDTaskManager.TaskManager.addSustainTask(tickTime, self.tick)
 		return
 
 	def tick(self):
 		raise NotImplementedError
 
-	def run(self, timeOut = 0.5):
-		super(GameServer, self).run(timeOut)
+	def run(self):
+		super(GameServer, self).run()
 
 SERVER_PORT  = 10305
 
@@ -44,7 +45,7 @@ class CoDServer(GameServer):
 	Initialize.
 	"""
 	def __init__(self):
-		super(CoDServer, self).__init__(0.1)
+		super(CoDServer, self).__init__(2.0)
 		self._tickStartTime = time.time()
 		# Database 
 		self._dbMgr = CoDDatabaseManager.CoDDatabaseManager()
@@ -72,22 +73,26 @@ class CoDServer(GameServer):
 		# receive msgs from clients, then push them to the _clientMsgList
 		self._network.process()
 		_event, _clientHid, _clientTag, _data = self._network.read()
+		if _data != '':
+			print _data
+			self._network.send(_clientHid, "welcome\n")
 		if _event > 0:
 			self._clientMsgList.append((_event, _clientHid, _clientTag, _data))
-		if time.time() - self._tickStartTime > 5.0:
-			CoDTaskManager.TaskManager.cancel(self._tickTimer)
-			print 'stop test now'
-			sys.exit(1)
+#		if time.time() - self._tickStartTime > 5.0:
+#			CoDTaskManager.TaskManager.cancel(self._tickTimer)
+#			print 'stop test now'
+#			sys.exit(1)
 	"""
 	Start logic loop
 	"""
 	def tick(self):
 		# update game logic every 0.1 sec.
 		#print "called every ?"
+		print "tick"
 		for _msg in self._clientMsgList:
 			self._gameLogic.handleMessage(_msg);
 		self._clientMsgList = []
 
 if __name__ == '__main__':
 	svr = CoDServer()
-	svr.run(0.1)
+	svr.run()

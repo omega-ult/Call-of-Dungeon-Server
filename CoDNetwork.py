@@ -102,7 +102,7 @@ class NetStream(object):
 			except socket.error, (code, strerror):
 				if not code in self._errd:
 					self._errc = code
-					delf.close()
+					self.close()
 					return -1
 			if _text == '':
 				break
@@ -354,7 +354,7 @@ class NetHost(object):
 		if _sock:
 			_pos = -1
 			for _i in xrange(len(self._clients)):
-				if self._client[_i] == None:
+				if self._clients[_i] == None:
 					_pos = _i
 					break
 			if _pos < 0:

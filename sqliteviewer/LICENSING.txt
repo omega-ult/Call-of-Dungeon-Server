@@ -1,0 +1,32 @@
+﻿LICENSING
+
+This code is in Public Domain. You may do whatever you want with it.
+
+However, the same is not true for the Qt libraries needed to build
+this software, and this places restrictions on how you can develop
+and license derivative works.
+
+Developers that wish to produce derivative work and use it in commercial 
+projects need to hold a commercial Qt license as well. 
+
+If you are however working on a project licensed with the GPL/LGPL you may 
+use the GPL/LGPL version of Qt. You may release derivative works of this 
+software with any license you want as long as we are concerned, including
+GPL, LGPL, Public Domain or Commercial, provided you abide to the licensing
+terms of the version of Qt you have installed on your machine. 
+
+Please consult www.trolltech.com/licensing if you have any questions 
+about QT licensing. 
+
+----
+
+SQLite Viewer uses the LGPL Qt Toolkit (www.qtsoftware.com).
+Licenses for Qt are available in the following files:
+Qt_LICENSE_LGPL.txt
+Qt_LGPL_ESCEPTION.txt
+The version of Qt libraries bundled with SQLite Viewer is 4.8.3.
+To comply with the terms of the LGPL, sources for Qt 4.8.3 can be obtained from 
+http://releases.qt-project.org/qt4/source/qt-everywhere-opensource-src-4.8.3.zip
+
+
+
