@@ -1,0 +1,25 @@
+CREATE TABLE PlayerAccount
+(
+PlayerID integer PRIMARY KEY autoincrement
+)
+CREATE TABLE PlayerActor
+(
+PlayerID integer,
+ActorID integer PRIMARY KEY autoincrement,
+NickName text,
+ActorType integer
+)
+
+CREATE UNIQUE INDEX user_name_unique on PlayerAccount(Username)
+
+ALTER TABLE PlayerAccount ADD COLUMN Password text
+
+Insert Into PlayerAccount
+(
+UserName,
+Password
+) VALUES 
+(
+"netease0",
+"163"
+)	

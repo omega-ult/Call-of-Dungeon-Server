@@ -12,7 +12,10 @@ import socket
 import CoDNetwork
 import CoDDatabaseManager
 import CoDTaskManager
-import CoDLogic
+import CoDServerLogic
+import CoDMessage
+
+
 
 class IOService(object):
 	def process(self, timeout):
@@ -38,6 +41,11 @@ class GameServer(IOService):
 	def run(self):
 		super(GameServer, self).run()
 
+
+
+"""
+Main server body
+"""
 SERVER_PORT  = 10305
 
 class CoDServer(GameServer):
@@ -51,21 +59,15 @@ class CoDServer(GameServer):
 		self._dbMgr = CoDDatabaseManager.CoDDatabaseManager()
 		self._dbMgr.openDatabase(".\\cod.db")
 		# Network 
-		self._network = CoDNetwork.NetHost(CoDNetwork.HEAD_DWORD_LSB_EXCLUDE)
+		self._network = CoDNetwork.NetHost()
 		self._network.startup(SERVER_PORT)
 		self._network.setTimer(1000)
 		# Game logic
 		self._clientMsgList = []
-		self._gameLogic = CoDLogic.CoDLogic()
+		self._serviceDispatcher = CoDServerLogic.Dispatcher()
+		self._gameLogic = CoDServerLogic.CoDServerLogic(self._network, self._dbMgr, self._serviceDispatcher)
 
-		# test case
-		"""
-		self.client = CoDNetwork.NetStream(CoDNetwork.HEAD_DWORD_LSB_EXCLUDE)
-		self.client.connect('127.0.0.1', SERVER_PORT)
-		self.client.send('yoooo');
-		self.client.noDelay(0)
-		self.client.noDelay(1)
-		"""
+		
 	"""
 	Network handling
 	"""
@@ -73,26 +75,30 @@ class CoDServer(GameServer):
 		# receive msgs from clients, then push them to the _clientMsgList
 		self._network.process()
 		_event, _clientHid, _clientTag, _data = self._network.read()
-		if _data != '':
-			print _data
-			self._network.send(_clientHid, "welcome\n")
-		if _event > 0:
-			self._clientMsgList.append((_event, _clientHid, _clientTag, _data))
-#		if time.time() - self._tickStartTime > 5.0:
-#			CoDTaskManager.TaskManager.cancel(self._tickTimer)
-#			print 'stop test now'
-#			sys.exit(1)
+		_time = time.time()
+		if _event != -1:
+			if _event != CoDNetwork.NET_TIMER:
+				self._clientMsgList.append((_time, _event, _clientHid, _clientTag, _data))
+
+		#if time.time() - self._tickStartTime > 50.0:
+		#	CoDTaskManager.TaskManager.cancel(self._tickTimer)
+		#	print 'stop test now'
+		#	sys.exit(1)
 	"""
 	Start logic loop
 	"""
 	def tick(self):
-		# update game logic every 0.1 sec.
-		#print "called every ?"
-		print "tick"
-		for _msg in self._clientMsgList:
-			self._gameLogic.handleMessage(_msg);
+		for n in self._clientMsgList:
+			_rqst = CoDServerLogic.getRequest(n[0], n[1], n[4])
+			if _rqst != None:
+				try:
+					self._serviceDispatcher.dispatch(_rqst, n[2])
+				except:
+					raise
 		self._clientMsgList = []
+		self._gameLogic.updateGame()
 
+import struct
 if __name__ == '__main__':
 	svr = CoDServer()
 	svr.run()
