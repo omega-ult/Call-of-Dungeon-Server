@@ -26,7 +26,7 @@ class DelayTask(object):
 		self._kwargs = kwargs
 
 		self.isCancelled = False
-		self.timeOut = self._delay
+		self.timeOut = time.time() + self._delay
 
 	def __le__(self, other):
 		return self.timeOut <= other.timeOut
@@ -61,8 +61,8 @@ class TaskManager(object):
 	@staticmethod
 	def addDelayTask(delay, func, *args, **kwargs):
 		_task = DelayTask(delay, func, *args, **kwargs)
-		heapq.headpush(Taskmanager.tasks, _task)
-		return task
+		heapq.heappush(TaskManager.tasks, _task)
+		return _task
 
 	@staticmethod
 	def addSustainTask(delay, func, *args, **kwargs):

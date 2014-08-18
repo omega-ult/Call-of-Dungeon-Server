@@ -23,3 +23,5 @@ Password
 "netease0",
 "163"
 )	
+
+UPDATE PlayerActor SET ActorType = 0 WHERE xxx = xxx

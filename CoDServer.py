@@ -53,7 +53,7 @@ class CoDServer(GameServer):
 	Initialize.
 	"""
 	def __init__(self):
-		super(CoDServer, self).__init__(2.0)
+		super(CoDServer, self).__init__(0.5)
 		self._tickStartTime = time.time()
 		# Database 
 		self._dbMgr = CoDDatabaseManager.CoDDatabaseManager()
@@ -68,7 +68,7 @@ class CoDServer(GameServer):
 		self._gameLogic = CoDServerLogic.CoDServerLogic(self._network, self._dbMgr, self._serviceDispatcher)
 
 		
-	"""
+	"""self._mapSizeHeight
 	Network handling
 	"""
 	def process(self, timeOut):
